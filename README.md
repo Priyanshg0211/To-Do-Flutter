@@ -57,6 +57,15 @@ To get started with this Flutter To-Do Application, follow the steps below:
 
 If you would like to contribute to this project, feel free to fork the repository and submit pull requests. Bug reports and feature requests are also welcome.
 
+## APK
+
+You can download the APK file for this Flutter To-Do Application by clicking here. 
+Link - https://drive.google.com/file/d/1axuKGek2shTc6ayeL8XX3ujbhZddB0b-/view?usp=sharing
+
+## Feedback
+
+If you encounter any issues or have suggestions for improvement, feel free to open an issue on GitHub.
+
 ## License
 
 This Flutter To-Do Application is open-source and available under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code as per the terms of the license.
