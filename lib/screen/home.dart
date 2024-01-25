@@ -3,10 +3,23 @@ import '../model/todo.dart';
 import '../constants/colors.dart';
 import '../widget/todo_item.dart';
 
-class Home extends StatelessWidget {
-  Home({super.key});
+class Home extends StatefulWidget {
+  Home({Key? key}) : super(key: key);
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final todosList = ToDo.todoList();
+  List<ToDo> _foundToDo = [];
+  final _todoController = TextEditingController();
+
+  @override
+  void initState() {
+    _foundToDo = todosList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +44,11 @@ class Home extends StatelessWidget {
                               fontSize: 30, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      for (ToDo todo in todosList)
+                      for (ToDo todoo in _foundToDo.reversed)
                         ToDoItem(
-                          todo: todo,
+                          todo: todoo,
+                          onToDoChanged: _handleToDochange,
+                          onDeleteItem: _deleteToDoItem,
                         ),
                     ],
                   ),
@@ -66,6 +81,10 @@ class Home extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextField(
+                      controller: _todoController,
+                      onChanged: (value) {
+                        _runfilter(value); 
+                      },
                       decoration: InputDecoration(
                         hintText: 'Add a new ToDo Item',
                         border: InputBorder.none,
@@ -79,11 +98,15 @@ class Home extends StatelessWidget {
                     right: 20,
                   ),
                   child: ElevatedButton(
-                    child: Text('+', style: TextStyle(fontSize: 40,color: Colors.white),),
-                    onPressed: () {},
+                    child: Text(
+                      '+',
+                      style: TextStyle(fontSize: 40, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      _addToDoItem(_todoController.text);
+                    },
                     style: ElevatedButton.styleFrom(
-                      primary: tdBlue,
-                      minimumSize: Size(60, 60),
+                      backgroundColor: tdBlue,
                       elevation: 10,
                     ),
                   ),
@@ -96,12 +119,59 @@ class Home extends StatelessWidget {
     );
   }
 
+  void _handleToDochange(ToDo toDo) async {
+    setState(() {
+      toDo.isdone = !toDo.isdone;
+    });
+  }
+
+  void _deleteToDoItem(String id) {
+    setState(() {
+      todosList.removeWhere((item) => item.id == id);
+      _runfilter(_todoController.text); // Refresh the filtered list after deletion
+    });
+  }
+
+  void _addToDoItem(String todoText) {
+    if (todoText.isNotEmpty) {
+      setState(() {
+        todosList.add(ToDo(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          todoText: todoText,
+        ));
+        _runfilter(_todoController.text); // Refresh the filtered list after addition
+      });
+      _todoController.clear();
+    }
+  }
+
+  void _runfilter(String enteredKeyword) {
+    List<ToDo> result = [];
+
+    if (enteredKeyword.isEmpty) {
+      result = todosList;
+    } else {
+      result = todosList
+          .where((item) => item.todoText!
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+
+    setState(() {
+      _foundToDo = result;
+    });
+  }
+
   Widget searchbox() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: const TextField(
+      child: TextField(
+        onChanged: (value) {
+          _runfilter(value); 
+        },
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(0),
             prefixIcon: Icon(
