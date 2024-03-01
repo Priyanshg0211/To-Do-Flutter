@@ -32,7 +32,7 @@ class ToDoItem extends StatelessWidget {
           color: tdBlue,
         ),
         title: Text(
-          todo.todoText ?? '', // Use an empty string if todoText is null
+          todo.todoText ?? '', // Use an empty string if todoText is null 
           style: TextStyle(
             fontSize: 16,
             color: tdBlack,
